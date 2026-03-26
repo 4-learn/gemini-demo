@@ -33,7 +33,7 @@ def demo_basic_generation():
     print("=== 基本文字生成 ===\n")
 
     # 建立模型
-    model = genai.GenerativeModel("gemini-1.5-flash")
+    model = genai.GenerativeModel("gemini-2.5-flash")
 
     # 簡單問答
     prompt = "什麼是個人防護裝備（PPE）？用一段話簡單說明。"
@@ -50,7 +50,7 @@ def demo_system_instruction():
 
     # 建立帶有系統指令的模型
     model = genai.GenerativeModel(
-        "gemini-1.5-flash",
+        "gemini-2.5-flash",
         system_instruction="""你是一位工安專家助手。
 你的職責是：
 1. 回答職業安全相關問題
