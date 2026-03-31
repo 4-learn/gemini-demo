@@ -105,7 +105,7 @@ if __name__ == "__main__":
     chunk_embeddings = get_embeddings(chunk_texts)
 
     # 2. 測試問題
-    question = "在高處工作需要什麼安全裝備？"
+    question = "工人在屋頂施工掉下來，違反什麼法規？"
     print(f"\n問題：{question}")
 
     # 3. 向量搜尋（粗搜 top 5）
