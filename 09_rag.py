@@ -9,7 +9,7 @@ RAG 的做法：先搜尋相關段落，只把相關的塞進 prompt。
   python 09_rag.py --mock
 
 需要：
-  pip install google-generativeai python-dotenv numpy
+  pip install google-genai scikit-learn python-dotenv numpy
 """
 
 import json
@@ -74,14 +74,14 @@ def get_embeddings(texts, mock=False):
     if mock:
         return _mock_embeddings(texts)
 
-    import google.generativeai as genai
+    from google import genai
 
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-    result = genai.embed_content(
-        model="models/text-embedding-004",
+    client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+    result = client.models.embed_content(
+        model="gemini-embedding-001",
         content=texts,
     )
-    return result["embedding"]
+    return [e.values for e in result.embeddings]
 
 
 def _mock_embeddings(texts):
@@ -153,10 +153,10 @@ def rag_answer(question, chunks, chunk_embeddings, mock=False):
     if mock:
         answer = f"根據相關法規，{results[0]['chunk']['content'][:60]}..."
     else:
-        import google.generativeai as genai
+        from google import genai
 
-        genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-        model = genai.GenerativeModel("gemini-2.5-flash")
+        client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+        
 
         prompt = f"""根據以下法規內容回答問題。只用提供的法規回答，不要編造。
 
@@ -167,7 +167,7 @@ def rag_answer(question, chunks, chunk_embeddings, mock=False):
 
 請用繁體中文回答。"""
 
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
         answer = response.text
 
     return {

@@ -8,7 +8,7 @@ Demo：Reranking（語意重排序）
   python 10_reranking.py --mock
 
 需要：
-  pip install google-generativeai python-dotenv numpy
+  pip install google-genai scikit-learn python-dotenv numpy
 """
 
 import json
@@ -62,10 +62,10 @@ def get_embeddings(texts, mock=False):
             vectors.append(vec.tolist())
         return vectors
 
-    import google.generativeai as genai
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-    result = genai.embed_content(model="models/text-embedding-004", content=texts)
-    return result["embedding"]
+    from google import genai
+    client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+    result = client.models.embed_content(model="gemini-embedding-001", contents=texts)
+    return [e.values for e in result.embeddings]
 
 
 def cosine_similarity(a, b):
@@ -91,9 +91,9 @@ def rerank_with_gemini(question, candidates, mock=False):
     if mock:
         return _mock_rerank(question, candidates)
 
-    import google.generativeai as genai
-    genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
-    model = genai.GenerativeModel("gemini-2.5-flash")
+    from google import genai
+    client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
+    
 
     # 組合候選段落
     candidate_text = ""
@@ -108,7 +108,7 @@ def rerank_with_gemini(question, candidates, mock=False):
 {candidate_text}
 排序（最相關在前）："""
 
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
     text = response.text.strip()
 
     # 解析排序
