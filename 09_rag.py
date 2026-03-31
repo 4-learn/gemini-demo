@@ -79,7 +79,7 @@ def get_embeddings(texts, mock=False):
     client = genai.Client(api_key=os.getenv("GOOGLE_API_KEY"))
     result = client.models.embed_content(
         model="gemini-embedding-001",
-        content=texts,
+        contents=texts,
     )
     return [e.values for e in result.embeddings]
 
